@@ -17,7 +17,7 @@ if (!isset($_SESSION['username'])) {
 <!-- Navbar -->
 <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
   <div class="container-fluid">
-    <a class="navbar-brand" href="dashboard.php">Dashboard</a>
+    <a class="navbar-brand" href="dashboard.php">SSS</a>
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
       aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
       <span class="navbar-toggler-icon"></span>
@@ -27,13 +27,16 @@ if (!isset($_SESSION['username'])) {
       <!-- Menu kiri -->
       <ul class="navbar-nav me-auto mb-2 mb-lg-0">
         <li class="nav-item">
+          <a class="nav-link active" href="dashboard.php">Dashboard</a>
+        </li>
+        <li class="nav-item">
           <a class="nav-link" href="daily_visit.php">Daily Visit</a>
         </li>
         <li class="nav-item">
           <a class="nav-link" href="timestamp.php">Timestamp</a>
         </li>
         <li class="nav-item">
-          <a class="nav-link" href="ichiban.php">Ichiban</a>
+          <a class="nav-link" href="ichiban.php">SSS</a>
         </li>
         <li class="nav-item">
           <a class="nav-link" href="stockcard.php">Stock Card</a>
@@ -42,7 +45,7 @@ if (!isset($_SESSION['username'])) {
 
       <!-- Menu kanan (user info & logout) -->
       <ul class="navbar-nav">
-        <li class="nav-item"><a class="nav-link active" href="profile.php">Profile</a></li>
+        <li class="nav-item"><a class="nav-link" href="profile.php">Profile</a></li>
         <li class="nav-item">
           <span class="navbar-text text-white me-3">
             <?= $_SESSION['username']; ?> (<?= $_SESSION['role']; ?>)
@@ -59,8 +62,8 @@ if (!isset($_SESSION['username'])) {
 <!-- Konten Dashboard -->
 <div class="container mt-4">
   <div class="p-4 bg-light rounded shadow-sm">
-    <h2>Selamat datang, <?= $_SESSION['username']; ?> 👋</h2>
-    <p class="text-muted">Silakan pilih menu di atas untuk mengakses data Daily Visit, Timestamp, Ichiban, atau Stock Card.</p>
+    <h1>Selamat datang, <?= $_SESSION['username']; ?> 👋</h1>
+    <p class="text-muted">Silakan pilih menu di atas untuk mengakses data Daily Visit, Timestamp, SSS, atau Stock Card.</p>
   </div>
 </div>
 

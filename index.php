@@ -3,17 +3,25 @@ session_start();
 include "config.php";
 
 if (isset($_POST['login'])) {
-    $username = $_POST['username'];
+    $username = trim($_POST['username']);
     $password = $_POST['password'];
 
-    $sql = "SELECT * FROM users WHERE username='$username'";
-    $result = mysqli_query($conn, $sql);
-    $user = mysqli_fetch_assoc($result);
+    // Gunakan prepared statement
+    $stmt = $conn->prepare("SELECT * FROM users WHERE username = ?");
+    $stmt->bind_param("s", $username);
+    $stmt->execute();
+    $result = $stmt->get_result();
+    $user = $result->fetch_assoc();
 
     if ($user && password_verify($password, $user['password'])) {
+        // Regenerasi session ID untuk keamanan
+        session_regenerate_id(true);
+
         $_SESSION['username'] = $user['username'];
         $_SESSION['role'] = $user['role'];
+
         header("Location: dashboard.php");
+        exit;
     } else {
         $error = "Username atau password salah!";
     }
@@ -34,12 +42,12 @@ if (isset($_POST['login'])) {
         <div class="card-body">
           <h3 class="text-center mb-4">Login</h3>
           <?php if(isset($error)) { ?>
-            <div class="alert alert-danger"><?= $error ?></div>
+            <div class="alert alert-danger"><?= htmlspecialchars($error) ?></div>
           <?php } ?>
           <form method="post">
             <div class="mb-3">
               <label class="form-label">Username</label>
-              <input type="text" name="username" class="form-control" required>
+              <input type="text" name="username" value="<?= isset($username) ? htmlspecialchars($username) : '' ?>" class="form-control" required>
             </div>
             <div class="mb-3">
               <label class="form-label">Password</label>
@@ -47,9 +55,6 @@ if (isset($_POST['login'])) {
             </div>
             <button type="submit" name="login" class="btn btn-primary w-100">Login</button>
           </form>
-          <!-- <p class="mt-3 text-center">
-            Belum punya akun? <a href="register.php">Register</a>
-          </p> -->
         </div>
       </div>
     </div>

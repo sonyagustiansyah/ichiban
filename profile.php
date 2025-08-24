@@ -15,25 +15,35 @@ if (isset($_POST['update_password'])) {
     $new_password     = $_POST['new_password'];
     $confirm_password = $_POST['confirm_password'];
 
-    // Ambil user dari database
-    $sql = "SELECT * FROM users WHERE username='$username'";
-    $result = mysqli_query($conn, $sql);
-    $user = mysqli_fetch_assoc($result);
+    // Validasi panjang password minimal 6 karakter
+    if (strlen($new_password) < 6) {
+        $error = "Password baru minimal 6 karakter!";
+    } else {
+        // Ambil user dari database (prepared statement)
+        $stmt = $conn->prepare("SELECT password FROM users WHERE username = ?");
+        $stmt->bind_param("s", $username);
+        $stmt->execute();
+        $result = $stmt->get_result();
+        $user = $result->fetch_assoc();
 
-    if ($user && password_verify($current_password, $user['password'])) {
-        if ($new_password === $confirm_password) {
-            $hashed = password_hash($new_password, PASSWORD_DEFAULT);
-            $update = "UPDATE users SET password='$hashed' WHERE username='$username'";
-            if (mysqli_query($conn, $update)) {
-                $success = "Password berhasil diubah!";
+        if ($user && password_verify($current_password, $user['password'])) {
+            if ($new_password === $confirm_password) {
+                $hashed = password_hash($new_password, PASSWORD_DEFAULT);
+
+                $stmt = $conn->prepare("UPDATE users SET password = ? WHERE username = ?");
+                $stmt->bind_param("ss", $hashed, $username);
+
+                if ($stmt->execute()) {
+                    $success = "Password berhasil diubah!";
+                } else {
+                    $error = "Terjadi kesalahan. Coba lagi!";
+                }
             } else {
-                $error = "Terjadi kesalahan: " . mysqli_error($conn);
+                $error = "Password baru tidak sama dengan konfirmasi!";
             }
         } else {
-            $error = "Password baru tidak sama dengan konfirmasi!";
+            $error = "Password lama salah!";
         }
-    } else {
-        $error = "Password lama salah!";
     }
 }
 ?>
@@ -49,17 +59,18 @@ if (isset($_POST['update_password'])) {
 <!-- Navbar -->
 <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
   <div class="container-fluid">
-    <a class="navbar-brand" href="dashboard.php">Dashboard</a>
+    <a class="navbar-brand" href="dashboard.php">SSS</a>
     <div class="collapse navbar-collapse" id="navbarNav">
       <ul class="navbar-nav me-auto">
+        <li class="nav-item"><a class="nav-link" href="dashboard.php">Dashboard</a></li>
         <li class="nav-item"><a class="nav-link" href="daily_visit.php">Daily Visit</a></li>
         <li class="nav-item"><a class="nav-link" href="timestamp.php">Timestamp</a></li>
-        <li class="nav-item"><a class="nav-link" href="ichiban.php">Ichiban</a></li>
+        <li class="nav-item"><a class="nav-link" href="ichiban.php">SSS</a></li>
         <li class="nav-item"><a class="nav-link" href="stockcard.php">Stock Card</a></li>
       </ul>
       <ul class="navbar-nav">
         <li class="nav-item"><a class="nav-link active" href="profile.php">Profile</a></li>
-        <li class="nav-item"><span class="navbar-text text-white me-3"><?= $_SESSION['username']; ?> (<?= $_SESSION['role']; ?>)</span></li>
+        <li class="nav-item"><span class="navbar-text text-white me-3"><?= htmlspecialchars($_SESSION['username']); ?> (<?= htmlspecialchars($_SESSION['role']); ?>)</span></li>
         <li class="nav-item"><a class="btn btn-danger btn-sm mt-1" href="logout.php">Logout</a></li>
       </ul>
     </div>
@@ -76,10 +87,10 @@ if (isset($_POST['update_password'])) {
 
           <!-- Pesan -->
           <?php if($success): ?>
-            <div class="alert alert-success"><?= $success ?></div>
+            <div class="alert alert-success"><?= htmlspecialchars($success) ?></div>
           <?php endif; ?>
           <?php if($error): ?>
-            <div class="alert alert-danger"><?= $error ?></div>
+            <div class="alert alert-danger"><?= htmlspecialchars($error) ?></div>
           <?php endif; ?>
 
           <!-- Form Ubah Password -->

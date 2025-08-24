@@ -1,0 +1,19 @@
+/* Sticky header */
+.table-responsive thead th {
+position: sticky;
+top: 0;
+background-color: #212529; /* warna bg sama dengan .table-dark */
+color: white;
+z-index: 2;
+}
+
+/* Supaya font lebih kecil di mobile */
+@media (max-width: 768px) {
+.table td, .table th {
+font-size: 0.8rem;
+white-space: nowrap; /* biar ga pecah ke bawah */
+}
+.table img {
+width: 50px; /* kecilin gambar di HP */
+}
+}
